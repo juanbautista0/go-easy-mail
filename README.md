@@ -69,7 +69,7 @@ func main() {
 	mail.Subject = "Test Email"
 	mail.Body = "This is a test email using go-easy-mail."
 
-    //  set attachments
+     //  set attachments
 	mail.Attachments = map[string][]byte{
 		"/tmp/MY_CV.pdf": easyMail.ReadFile("/tmp/MY_CV.pdf"),
 	}
