@@ -36,6 +36,7 @@ func main() {
 
 	mail := &go_easy_mail.Mail{}
 	mail.Sender = user
+	mail.SenderName = "YOUR CUSTOM SENDER NAME"
 	mail.To = []string{"recipient@easymail.com"}
 	mail.Subject = "Test Email"
 	mail.Body = "This is a test email using go-easy-mail."
@@ -65,6 +66,7 @@ func main() {
 
 	mail := &go_easy_mail.Mail{}
 	mail.Sender = user
+	mail.SenderName = "YOUR CUSTOM SENDER NAME"
 	mail.To = []string{"recipient@easymail.com"}
 	mail.Subject = "Test Email"
 	mail.Body = "This is a test email using go-easy-mail."
