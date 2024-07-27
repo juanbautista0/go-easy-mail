@@ -16,6 +16,7 @@ import (
 
 type Mail struct {
 	Sender      string
+	SenderName  string
 	To          []string
 	Cc          []string
 	Bcc         []string
@@ -112,7 +113,13 @@ func (in *GoEasyEmail) buildMessage(mail *Mail) string {
 	// MIME Header
 	message.WriteString("MIME-Version: 1.0\r\n")
 	message.WriteString("Content-Type: multipart/mixed; boundary=\"myboundary\"\r\n")
-	message.WriteString(fmt.Sprintf("From: %s\r\n", mail.Sender))
+
+	if mail.SenderName != "" {
+		message.WriteString(fmt.Sprintf("From: %s <%s>\r\n", mail.SenderName, mail.Sender))
+	} else {
+		message.WriteString(fmt.Sprintf("From: %s\r\n", mail.Sender))
+	}
+
 	if len(mail.To) > 0 {
 		message.WriteString(fmt.Sprintf("To: %s\r\n", strings.Join(mail.To, ";")))
 	}
