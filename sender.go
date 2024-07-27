@@ -119,7 +119,8 @@ func (in *GoEasyEmail) buildMessage(mail *Mail) string {
 	if len(mail.Cc) > 0 {
 		message.WriteString(fmt.Sprintf("Cc: %s\r\n", strings.Join(mail.Cc, ";")))
 	}
-	message.WriteString(fmt.Sprintf("Subject: %s\r\n", mail.Subject))
+	subject := base64.StdEncoding.EncodeToString([]byte(mail.Subject))
+	message.WriteString(fmt.Sprintf("Subject: =?utf-8?B?%s?=\r\n", subject))
 	message.WriteString("\r\n")
 
 	// Message body
