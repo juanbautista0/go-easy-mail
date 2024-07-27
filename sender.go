@@ -107,43 +107,47 @@ func (in *GoEasyEmail) Send(mail *Mail) (*Mail, error) {
 	return mail, nil
 }
 
-func (in *GoEasyEmail) buildMessage(mail *Mail) string {
+func (in *GoEasyEmail) buildMessage(mailDto *Mail) string {
 	var message strings.Builder
 
 	// MIME Header
 	message.WriteString("MIME-Version: 1.0\r\n")
 	message.WriteString("Content-Type: multipart/mixed; boundary=\"myboundary\"\r\n")
 
-	if mail.SenderName != "" {
-		message.WriteString(fmt.Sprintf("From: %s <%s>\r\n", mail.SenderName, mail.Sender))
+	if mailDto.SenderName != "" {
+		from := &mail.Address{
+			Name:    mailDto.SenderName,
+			Address: mailDto.Sender,
+		}
+		message.WriteString(fmt.Sprintf("From: %s\r\n", from.String()))
 	} else {
-		message.WriteString(fmt.Sprintf("From: %s\r\n", mail.Sender))
+		message.WriteString(fmt.Sprintf("From: %s\r\n", mailDto.Sender))
 	}
 
-	if len(mail.To) > 0 {
-		message.WriteString(fmt.Sprintf("To: %s\r\n", strings.Join(mail.To, ";")))
+	if len(mailDto.To) > 0 {
+		message.WriteString(fmt.Sprintf("To: %s\r\n", strings.Join(mailDto.To, ";")))
 	}
-	if len(mail.Cc) > 0 {
-		message.WriteString(fmt.Sprintf("Cc: %s\r\n", strings.Join(mail.Cc, ";")))
+	if len(mailDto.Cc) > 0 {
+		message.WriteString(fmt.Sprintf("Cc: %s\r\n", strings.Join(mailDto.Cc, ";")))
 	}
-	subject := base64.StdEncoding.EncodeToString([]byte(mail.Subject))
+	subject := base64.StdEncoding.EncodeToString([]byte(mailDto.Subject))
 	message.WriteString(fmt.Sprintf("Subject: =?utf-8?B?%s?=\r\n", subject))
 	message.WriteString("\r\n")
 
 	// Message body
 	message.WriteString("--myboundary\r\n")
-	if mail.IsHTML {
+	if mailDto.IsHTML {
 		message.WriteString("Content-Type: text/html; charset=\"utf-8\"\r\n")
 	} else {
 		message.WriteString("Content-Type: text/plain; charset=\"utf-8\"\r\n")
 	}
 	message.WriteString("Content-Transfer-Encoding: 7bit\r\n")
 	message.WriteString("\r\n")
-	message.WriteString(mail.Body)
+	message.WriteString(mailDto.Body)
 	message.WriteString("\r\n")
 
 	// Attachments
-	for filename, data := range mail.Attachments {
+	for filename, data := range mailDto.Attachments {
 		message.WriteString("--myboundary\r\n")
 		contentType := in.getContentType(filename)
 		message.WriteString(fmt.Sprintf("Content-Type: %s; name=\"%s\"\r\n", contentType, filename))
